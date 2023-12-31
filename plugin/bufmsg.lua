@@ -12,4 +12,4 @@ vim.g.loaded_bufmsg = 1
 -- create any global command that does not depend on user setup
 -- usually it is better to define most commands/mappings in the setup function
 -- Be careful to not overuse this file!
-local bmessages = require("bufmsg")
+local bufmsg = require("bufmsg")

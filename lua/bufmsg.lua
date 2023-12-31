@@ -1,25 +1,13 @@
 local M = {}
 M.current_split_type = nil
 
-local function with_defaults(options)
-	options = options or {}
-
-	local defaults = {
-		split_type = "vsplit",
-		buffer_name = "bmessages_buffer",
-		split_size_vsplit = nil,
-		split_size_split = nil,
-		modifiable = true,
-	}
-
-	for key, default_value in pairs(defaults) do
-		if options[key] == nil then
-			options[key] = default_value
-		end
-	end
-
-	return options
-end
+M.options = {
+	split_type = "vsplit",
+	buffer_name = "bmessages_buffer",
+	split_size_vsplit = nil,
+	split_size_split = nil,
+	modifiable = true,
+}
 
 local function is_bmessages_buffer_open(options)
 	local bufnr = vim.fn.bufnr(options.buffer_name)
@@ -61,7 +49,7 @@ local function merge_options(defaults, new_options)
 	if not new_options then
 		return defaults
 	end
-	return vim.tbl_deep_extend("force", {}, defaults, new_options)
+	return vim.tbl_deep_extend("force", defaults, new_options)
 end
 
 local function create_raw_buffer(options)
@@ -112,7 +100,7 @@ end
 
 -- This function is supposed to be called explicitly by users to configure this plugin
 function M.setup(options)
-	M.options = with_defaults(options)
+	M.options = vim.tbl_deep_extend("force", M.options, options)
 
 	if M.options.disable_create_user_commands then
 		return
@@ -130,5 +118,4 @@ end
 -- Users can call this function directly in lua with: require("bmesssages").toggle()
 M.toggle = create_messages_buffer
 
-M.options = nil
 return M
