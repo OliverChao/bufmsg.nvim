@@ -95,7 +95,18 @@ local function create_messages_buffer(new_options)
 	local update_fn = update_messages_buffer(options)
 	update_fn()
 
+	-- update messages
 	vim.keymap.set("n", "<C-u>", update_fn, { silent = true, buffer = bufnr })
+	-- clear all messages
+	vim.keymap.set("n", "<C-r>", function()
+		vim.ui.input({ prompt = "Are you sure you want to clear the message buffer (y/n)" }, function(input)
+			if input == "Y" or input == "y" then
+				vim.cmd([[messages clear]])
+				vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, { "" })
+				vim.notify("clear all messages", vim.log.levels.INFO)
+			end
+		end)
+	end, { silent = true, buffer = bufnr })
 end
 
 -- This function is supposed to be called explicitly by users to configure this plugin
