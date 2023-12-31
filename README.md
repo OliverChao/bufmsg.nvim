@@ -7,3 +7,13 @@ This plugin removes all time loop codes and the buffer including messages is mod
 
 You can use `<cltr>-u` to update the new messages.
 
+## config
+```lua
+{
+  -- show messages in one buffer
+  "OliverChao/bufmsg.nvim",
+  -- dir = "~/code/lua/bufmsg.nvim",
+  cmd = "Bufmsg",
+  opts = {},
+},
+```
