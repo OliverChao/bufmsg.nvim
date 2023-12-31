@@ -118,7 +118,7 @@ function M.setup(options)
 		return
 	end
 
-	vim.api.nvim_create_user_command("Bmessages", function()
+	vim.api.nvim_create_user_command("Bufmsg", function()
 		create_messages_buffer(M.options)
 	end, {})
 end
