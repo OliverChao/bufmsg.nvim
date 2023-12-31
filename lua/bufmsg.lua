@@ -13,6 +13,7 @@ M.options = {
 }
 
 local buffer_name = "bufmsg_buffer"
+
 local function is_bmessages_buffer_open(options)
 	local bufnr = vim.fn.bufnr(buffer_name)
 	return vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_is_loaded(bufnr)
@@ -39,7 +40,7 @@ local function update_messages_buffer(options)
 			vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
 		end
 
-		if options.autoscroll and vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()) ~= buffer_name then
+		if vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf()) ~= buffer_name then
 			local winnr = vim.fn.bufwinnr(bufnr)
 			if winnr ~= -1 then
 				local winid = vim.fn.win_getid(winnr)
@@ -133,12 +134,5 @@ function M.setup(options)
 		create_messages_buffer(vim.tbl_deep_extend("force", M.options, { split_type = "split" }))
 	end, {})
 end
-
-function M.is_configured()
-	return M.options ~= nil
-end
-
--- Users can call this function directly in lua with: require("bmesssages").toggle()
-M.toggle = create_messages_buffer
 
 return M
