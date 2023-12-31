@@ -1,9 +1,12 @@
-# Easy use message buffer plugin
+# Easy-use messages buffer plugin
 This plugin is modified on the basic of [bmessages.nvim](https://github.com/ariel-frischer/bmessages.nvim).
 
-I modify some logic functinos and only keep one command `Bufmsg`.
+I modify some logic functinos and make it useful *for me*.
 
 > If you have no idea you want to use some features provided by this plugin, use [bmessages.nvim](https://github.com/ariel-frischer/bmessages.nvim).
+
+https://github.com/OliverChao/bufmsg.nvim/assets/39361033/44f0524c-3cd6-45d7-be5f-ea7c94df6875
+
 
 This plugin removes all time loop codes and the buffer including messages is modifiable.
 
