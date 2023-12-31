@@ -1,6 +1,3 @@
--- Author: Ariel Frischer
--- email: arielfrischer@gmail.com
-
 local M = {}
 M.current_split_type = nil
 
@@ -12,7 +9,7 @@ local function with_defaults(options)
 		buffer_name = "bmessages_buffer",
 		split_size_vsplit = nil,
 		split_size_split = nil,
-		modifiable = false,
+		modifiable = true,
 	}
 
 	for key, default_value in pairs(defaults) do
@@ -110,9 +107,7 @@ local function create_messages_buffer(new_options)
 	local update_fn = update_messages_buffer(options)
 	update_fn()
 
-	if not options.modifiable then
-		vim.keymap.set("n", "u", update_fn, { silent = true, buffer = bufnr })
-	end
+	vim.keymap.set("n", "<C-u>", update_fn, { silent = true, buffer = bufnr })
 end
 
 -- This function is supposed to be called explicitly by users to configure this plugin
@@ -125,18 +120,6 @@ function M.setup(options)
 
 	vim.api.nvim_create_user_command("Bmessages", function()
 		create_messages_buffer(M.options)
-	end, {})
-
-	vim.api.nvim_create_user_command("Bmessagesvs", function()
-		create_messages_buffer(vim.tbl_deep_extend("force", {}, M.options, { split_type = "vsplit" }))
-	end, {})
-
-	vim.api.nvim_create_user_command("Bmessagessp", function()
-		create_messages_buffer(vim.tbl_deep_extend("force", {}, M.options, { split_type = "split" }))
-	end, {})
-
-	vim.api.nvim_create_user_command("BmessagesEdit", function()
-		create_messages_buffer(vim.tbl_deep_extend("force", {}, M.options, { modifiable = true }))
 	end, {})
 end
 
