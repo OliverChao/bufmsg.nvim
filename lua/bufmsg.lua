@@ -3,10 +3,14 @@ M.current_split_type = nil
 
 M.options = {
 	split_type = "vsplit",
-	buffer_name = "bmessages_buffer",
+	buffer_name = "bufmsg_buffer",
 	split_size_vsplit = nil,
 	split_size_split = nil,
 	modifiable = true,
+	mappings = {
+		update = "<C-u>",
+		clear = "<C-r>",
+	},
 }
 
 local function is_bmessages_buffer_open(options)
@@ -96,9 +100,9 @@ local function create_messages_buffer(new_options)
 	update_fn()
 
 	-- update messages
-	vim.keymap.set("n", "<C-u>", update_fn, { silent = true, buffer = bufnr })
+	vim.keymap.set("n", M.options.mappings.update, update_fn, { silent = true, buffer = bufnr })
 	-- clear all messages
-	vim.keymap.set("n", "<C-r>", function()
+	vim.keymap.set("n", M.options.mappings.clear, function()
 		vim.ui.input({ prompt = "Are you sure you want to clear the message buffer (y/n)" }, function(input)
 			if input == "Y" or input == "y" then
 				vim.cmd([[messages clear]])
