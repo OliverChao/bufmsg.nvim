@@ -3,6 +3,8 @@ This plugin is modified on the basic of [bmessages.nvim](https://github.com/arie
 
 I modify some logic functinos and only keep one command `Bufmsg`.
 
+> If you have no idea you want to use some features provided by this plugin, use [bmessages.nvim](https://github.com/ariel-frischer/bmessages.nvim).
+
 This plugin removes all time loop codes and the buffer including messages is modifiable.
 
 You can use `<cltr>-u` to update the new messages.
