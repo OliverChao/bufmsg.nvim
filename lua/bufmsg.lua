@@ -8,14 +8,11 @@ local function with_defaults(options)
 	options = options or {}
 
 	local defaults = {
-		timer_interval = 1000,
 		split_type = "vsplit",
 		buffer_name = "bmessages_buffer",
 		split_size_vsplit = nil,
 		split_size_split = nil,
-		autoscroll = true,
-		use_timer = true,
-		disable_create_user_commands = false,
+		modifiable = false,
 	}
 
 	for key, default_value in pairs(defaults) do
@@ -45,15 +42,11 @@ local function update_messages_buffer(options)
 		end
 
 		local lines = vim.split(new_messages, "\n")
-		local current_lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
-
-		if #current_lines == #lines and vim.deep_equal(current_lines, lines) then
-			return
-		end
 
 		vim.api.nvim_set_option_value("modifiable", true, { buf = bufnr })
 		vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-		if options.use_timer then
+
+		if not options.modifiable then
 			vim.api.nvim_set_option_value("modifiable", false, { buf = bufnr })
 		end
 
@@ -81,6 +74,7 @@ local function create_raw_buffer(options)
 	vim.api.nvim_set_option_value("bufhidden", "wipe", { buf = bufnr })
 	vim.api.nvim_set_option_value("bl", false, { buf = bufnr })
 	vim.api.nvim_set_option_value("swapfile", false, { buf = bufnr })
+	vim.api.nvim_set_option_value("modifiable", options.modifiable, { buf = bufnr })
 	return bufnr
 end
 
@@ -116,33 +110,9 @@ local function create_messages_buffer(new_options)
 	local update_fn = update_messages_buffer(options)
 	update_fn()
 
-	local timer = vim.loop.new_timer()
-	local function close_timer()
-		timer:stop()
-		timer:close()
-		timer = nil
-	end
-
-	if not options.use_timer then
-		if timer then
-			close_timer()
-		end
+	if not options.modifiable then
 		vim.keymap.set("n", "u", update_fn, { silent = true, buffer = bufnr })
-		return nil
 	end
-
-	if options.use_timer and timer then
-		timer:start(options.timer_interval, options.timer_interval, vim.schedule_wrap(update_fn))
-	end
-
-	vim.api.nvim_create_autocmd({ "BufWipeout", "BufDelete" }, {
-		pattern = options.buffer_name,
-		callback = function()
-			if timer then
-				close_timer()
-			end
-		end,
-	})
 end
 
 -- This function is supposed to be called explicitly by users to configure this plugin
@@ -166,7 +136,7 @@ function M.setup(options)
 	end, {})
 
 	vim.api.nvim_create_user_command("BmessagesEdit", function()
-		create_messages_buffer(vim.tbl_deep_extend("force", {}, M.options, { use_timer = false }))
+		create_messages_buffer(vim.tbl_deep_extend("force", {}, M.options, { modifiable = true }))
 	end, {})
 end
 
