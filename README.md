@@ -17,3 +17,16 @@ You can use `<cltr>-u` to update the new messages.
   opts = {},
 },
 ```
+You can modify the following options:
+```lua
+opts = {
+	split_type = "vsplit",
+	split_size_vsplit = nil,
+	split_size_split = nil,
+	modifiable = true, -- the default messages buffer is modifiable
+	mappings = {     -- you can map your favourate mappings for messages updating and clearing.
+		update = "<C-u>",
+		clear = "<C-r>",
+	},
+}
+```
