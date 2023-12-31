@@ -109,6 +109,14 @@ function M.setup(options)
 	vim.api.nvim_create_user_command("Bufmsg", function()
 		create_messages_buffer(M.options)
 	end, {})
+
+	vim.api.nvim_create_user_command("Bufmsgvs", function()
+		create_messages_buffer(vim.tbl_deep_extend("force", M.options, { split_type = "vsplit" }))
+	end, {})
+
+	vim.api.nvim_create_user_command("Bufmsgss", function()
+		create_messages_buffer(vim.tbl_deep_extend("force", M.options, { split_type = "split" }))
+	end, {})
 end
 
 function M.is_configured()
