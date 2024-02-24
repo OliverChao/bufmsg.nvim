@@ -1,3 +1,7 @@
+local Float = require("float")
+-- local cfg = require('outline.config')
+local utils = require("utils")
+
 local M = {}
 M.current_split_type = nil
 
@@ -112,6 +116,7 @@ local function create_messages_buffer(new_options)
 			end
 		end)
 	end, { silent = true, buffer = bufnr })
+	vim.keymap.set("n", "?", M.show_keymap_help, { silent = true, buffer = bufnr })
 end
 
 -- This function is supposed to be called explicitly by users to configure this plugin
@@ -133,6 +138,64 @@ function M.setup(options)
 	vim.api.nvim_create_user_command("Bufmsgss", function()
 		create_messages_buffer(vim.tbl_deep_extend("force", M.options, { split_type = "split" }))
 	end, {})
+
+	vim.api.nvim_set_hl(0, "HelpTip", { fg = "gray" })
+	vim.api.nvim_set_hl(0, "HelpKey", { fg = "red" })
+end
+
+-- this function generated from Outline.nvim
+-- https://github.com/hedyhli/outline.nvim/tree/main/lua/outline
+function M.show_keymap_help()
+	local keyhint = "Press q or <Esc> to close this window."
+	local title = "Current keymaps:"
+	local lines = { keyhint, "", title, "" }
+	---@type HL[]
+	local hl = { { line = 0, from = 0, to = #keyhint, name = "HelpTip" } }
+	local left = {}
+	local right = {}
+	local max_left_width = 0
+	local indent = "    "
+	local key_hl = "HelpKey"
+
+	for keys, action in pairs(M.options.mappings) do
+		if type(keys) == "string" then
+			table.insert(left, keys)
+			table.insert(hl, {
+				line = #left + 3,
+				from = #indent,
+				to = #keys + #indent,
+				name = key_hl,
+			})
+		else
+			local i = #indent
+			table.insert(left, table.concat(keys, " / "))
+			for _, key in ipairs(keys) do
+				table.insert(hl, {
+					line = #left + 3,
+					from = i,
+					to = #key + i,
+					name = key_hl,
+				})
+				i = i + #key + 3
+			end
+		end
+		if #left[#left] > max_left_width then
+			max_left_width = #left[#left]
+		end
+		table.insert(right, action)
+	end
+
+	for i, l in ipairs(left) do
+		local pad = string.rep(" ", max_left_width - #l + 2)
+		table.insert(lines, indent .. l .. pad .. right[i])
+	end
+
+	local f = Float:new()
+	f:open(lines, hl, "Help", 1)
+
+	utils.nmap(f.bufnr, { "q", "<Esc>" }, function()
+		f:close()
+	end)
 end
 
 return M
