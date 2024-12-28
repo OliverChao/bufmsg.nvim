@@ -13,6 +13,7 @@ M.options = {
 	mappings = {
 		update = "<C-u>",
 		clear = "<C-r>",
+		help = "?",
 	},
 }
 
@@ -117,7 +118,7 @@ local function create_messages_buffer(new_options)
 			end
 		end)
 	end, { silent = true, buffer = bufnr })
-	vim.keymap.set("n", "?", M.show_keymap_help, { silent = true, buffer = bufnr })
+	vim.keymap.set("n", M.options.mappings.help, M.show_keymap_help, { silent = true, buffer = bufnr })
 end
 
 -- This function is supposed to be called explicitly by users to configure this plugin
